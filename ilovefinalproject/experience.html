@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>I Love You</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #ff2a2a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    img {
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+      transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+    }
+
+    .hint {
+      position: fixed;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: black;
+      opacity: 0.6;
+      letter-spacing: 1px;
+      user-select: none;
+      transition: top 0.25s ease, left 0.25s ease, opacity 0.25s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <img id="artwork" src="images/page1.png">
+  <div class="hint">click to continue</div>
+
+  <script>
+    const pages = [
+      "images/page1.png",
+      "images/page2.png",
+      "images/page3.png",
+      "images/page4.png",
+      "images/page5.png",
+      "images/page6.png",
+      "images/grandma1.png",
+      "red-screen",
+      "images/page8.png",
+      "images/page9.png",
+      "images/page10.png",
+      "images/page11.png",
+      "images/page12.png",
+      "images/page13.png",
+      "images/page14.png",
+      "images/page15.png",
+      "images/page16.png",
+      "images/page17.png",
+      "images/page18.png",
+      "images/page19.png",
+      "images/page20.png",
+      "images/page21.png",
+      "images/page22.png",
+      "images/page23.png",
+      "images/page24.png",
+      "end-screen"
+    ];
+
+    let currentPage = 0;
+    let isChanging = false;
+
+    const artwork = document.getElementById("artwork");
+    const hint = document.querySelector(".hint");
+
+    function moveHint() {
+      const padding = 60;
+      const x = Math.random() * (window.innerWidth - padding * 2) + padding;
+      const y = Math.random() * (window.innerHeight - padding * 2) + padding;
+
+      hint.style.left = x + "px";
+      hint.style.top = y + "px";
+    }
+
+    moveHint();
+
+    document.body.addEventListener("click", function () {
+      if (isChanging) return;
+      isChanging = true;
+
+      moveHint();
+
+      currentPage++;
+
+      if (currentPage >= pages.length) {
+        currentPage = pages.length - 1;
+        isChanging = false;
+        return;
+      }
+
+      const current = pages[currentPage];
+
+      artwork.style.filter = "none";
+      artwork.style.transform = "translate(0, 0) scale(1)";
+
+      // blank red pause
+      if (current === "red-screen") {
+        document.body.style.background = "#ff2a2a";
+        artwork.style.transition = "opacity 0.8s ease";
+        artwork.style.opacity = "0";
+
+        setTimeout(function () {
+          artwork.style.display = "none";
+          isChanging = false;
+          moveHint();
+        }, 800);
+
+        return;
+      }
+
+      // end screen
+      if (current === "end-screen") {
+        document.body.style.background = "#ff2a2a";
+        artwork.style.transition = "opacity 1s ease";
+        artwork.style.opacity = "0";
+
+        setTimeout(function () {
+          artwork.style.display = "none";
+          hint.style.display = "none";
+
+          const endText = document.createElement("div");
+          endText.innerHTML = "thank you.<br>the end.";
+          endText.style.position = "absolute";
+          endText.style.color = "black";
+          endText.style.fontSize = "24px";
+          endText.style.fontFamily = "Arial, sans-serif";
+          endText.style.opacity = "0";
+          endText.style.textAlign = "center";
+          endText.style.lineHeight = "1.5";
+          endText.style.transition = "opacity 1.2s ease";
+
+          document.body.appendChild(endText);
+
+          setTimeout(function () {
+            endText.style.opacity = "0.7";
+            isChanging = false;
+          }, 100);
+        }, 1000);
+
+        return;
+      }
+
+      artwork.style.display = "block";
+
+      // page8 right after red screen = clean fade in, no glitch
+      if (current === "images/page8.png") {
+        document.body.style.background = "#ff2a2a";
+        artwork.style.transition = "opacity 0.8s ease";
+        artwork.style.opacity = "0";
+        artwork.src = current;
+
+        setTimeout(function () {
+          artwork.style.opacity = "1";
+          isChanging = false;
+          moveHint();
+        }, 80);
+
+        return;
+      }
+
+      // first section: damaged clicking
+      if (currentPage <= 12) {
+        document.body.style.background = "#ff2a2a";
+        artwork.style.transition = "opacity 0.12s ease, filter 0.12s ease, transform 0.12s ease";
+        artwork.style.opacity = "0.25";
+        artwork.style.filter = "contrast(230%) brightness(70%) saturate(140%)";
+        artwork.style.transform = "translate(8px, -5px) scale(1.025)";
+
+        setTimeout(function () {
+          artwork.src = current;
+          artwork.style.opacity = "1";
+          artwork.style.filter = "none";
+          artwork.style.transform = "translate(0, 0) scale(1)";
+          isChanging = false;
+          moveHint();
+        }, 160);
+
+        return;
+      }
+
+      // second section: fade through black
+      document.body.style.background = "black";
+      hint.style.color = "red";
+      artwork.style.transition = "opacity 0.55s ease";
+      artwork.style.opacity = "0";
+
+      setTimeout(function () {
+        artwork.src = current;
+        artwork.style.opacity = "1";
+        isChanging = false;
+        moveHint();
+      }, 550);
+    });
+  </script>
+</body>
+</html>
